@@ -8,6 +8,12 @@ body:
       value: |
         Thank you for taking the time to report a bug! Please fill out the form
         below so we can reproduce and fix the issue as quickly as possible.
+        
+        **Want to fix this bug yourself?** We welcome contributions! If you're interested in helping, please:
+        - ⭐ [Star our repository](../../)
+        - 🔀 [Fork the repository](../../fork) and create a new branch for your fix
+        - 📖 Read our [CONTRIBUTING.md](../../blob/main/CONTRIBUTING.md) guide
+        - 🚀 Submit a PR with your fix!
 
   - type: textarea
     id: description

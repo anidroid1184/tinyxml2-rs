@@ -1,3 +1,11 @@
+## Contribution Checklist
+
+<!-- Please ensure you've completed these steps before submitting your PR. -->
+
+- [ ] ⭐ I have starred the repository
+- [ ] 🔀 I have forked the repository and created a new branch for my changes
+- [ ] 📖 I have read the [CONTRIBUTING.md](../CONTRIBUTING.md) guide
+
 ## Description
 
 <!-- Provide a concise description of the changes in this PR. -->

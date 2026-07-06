@@ -1,0 +1,63 @@
+name: Good First Issue
+description: A great way to get started contributing to tinyxml2-rs
+title: "[Good First Issue]: "
+labels: ["good first issue", "help wanted"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # Welcome, Contributors! 👋
+        
+        This is a great issue for people new to the project! These issues are designed
+        to be approachable and have clear acceptance criteria.
+        
+        **Ready to contribute?** Here's how to get started:
+        1. ⭐ [Star our repository](../../)
+        2. 🔀 [Fork the repository](../../fork)
+        3. 📖 Read our [CONTRIBUTING.md](../../blob/main/CONTRIBUTING.md) guide
+        4. 🔧 Set up your environment and work on the issue
+        5. 🚀 Submit a PR with your changes
+        
+        Don't hesitate to ask questions in the comments—we're here to help!
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear description of the task or improvement needed.
+      placeholder: Describe what needs to be done...
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Specific, measurable criteria for what "done" looks like.
+      placeholder: |
+        - [ ] Task step 1
+        - [ ] Task step 2
+        - [ ] Task step 3
+    validations:
+      required: true
+
+  - type: textarea
+    id: resources
+    attributes:
+      label: Helpful Resources & Context
+      description: Links to relevant documentation, code files, or examples.
+      placeholder: |
+        - See [documentation/file](../../blob/main/path/to/file)
+        - Related to [#issue-number](../../issues/number)
+        - Check out [CONTRIBUTING.md](../../blob/main/CONTRIBUTING.md)
+    validations:
+      required: false
+
+  - type: textarea
+    id: implementation-notes
+    attributes:
+      label: Implementation Notes
+      description: Any hints, suggestions, or guidelines for solving this issue.
+      placeholder: Suggested approach or files to look at...
+    validations:
+      required: false

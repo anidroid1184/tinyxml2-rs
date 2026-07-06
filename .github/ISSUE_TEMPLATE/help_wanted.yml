@@ -1,0 +1,86 @@
+name: Help Wanted
+description: An issue that needs contributor attention and support
+title: "[Help Wanted]: "
+labels: ["help wanted"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # Help Wanted 🙋
+        
+        We're looking for contributors to help with this task! This issue may be more complex
+        than "good first issues" but comes with guidance to help you succeed.
+        
+        **Interested in helping?** Here's how:
+        1. ⭐ [Star our repository](../../)
+        2. 🔀 [Fork the repository](../../fork)
+        3. 📖 Read our [CONTRIBUTING.md](../../blob/main/CONTRIBUTING.md) guide
+        4. 💬 Ask questions in the comments—we're happy to help!
+        5. 🚀 Submit a PR with your implementation
+        
+        We support all experience levels and are here to help you succeed!
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What needs to be done and why it matters.
+      placeholder: Describe the task and its importance...
+    validations:
+      required: true
+
+  - type: textarea
+    id: requirements
+    attributes:
+      label: Requirements
+      description: Specific requirements and acceptance criteria.
+      placeholder: |
+        - [ ] Requirement 1
+        - [ ] Requirement 2
+        - [ ] Requirement 3
+    validations:
+      required: true
+
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: Difficulty Level
+      description: How complex is this task?
+      options:
+        - Medium
+        - Hard
+        - Very Hard
+    validations:
+      required: true
+
+  - type: textarea
+    id: related-files
+    attributes:
+      label: Related Files
+      description: Links to relevant code, documentation, or related issues.
+      placeholder: |
+        - Files: `src/parser.rs`, `src/document.rs`
+        - Related: #123, #456
+        - Docs: [ARCHITECTURE.md](../../blob/main/ARCHITECTURE.md)
+    validations:
+      required: false
+
+  - type: textarea
+    id: guidance
+    attributes:
+      label: Implementation Guidance
+      description: Suggestions, architecture notes, or helpful hints for solving this.
+      placeholder: Suggested approach and any architectural considerations...
+    validations:
+      required: false
+
+  - type: textarea
+    id: getting-help
+    attributes:
+      label: Getting Help
+      description: How contributors can ask questions or get unstuck.
+      placeholder: |
+        Ask questions in the issue comments or join our community chat.
+        We're here to help! 😊
+    validations:
+      required: false

@@ -8,6 +8,12 @@ body:
       value: |
         Thank you for suggesting a feature! Please fill out the form below
         so we can understand your request and evaluate it.
+        
+        **Interested in implementing this yourself?** We'd love your help! If you'd like to contribute:
+        - ⭐ [Star our repository](../../)
+        - 🔀 [Fork the repository](../../fork) and create a new branch
+        - 📖 Read our [CONTRIBUTING.md](../../blob/main/CONTRIBUTING.md) guide
+        - 🚀 Submit a PR with your implementation!
 
   - type: textarea
     id: description
