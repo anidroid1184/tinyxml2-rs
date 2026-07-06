@@ -185,6 +185,19 @@ impl<'a> ElementRef<'a> {
     }
 
     /// Returns the string value of the named attribute, if it exists.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinyxml2::Document;
+    ///
+    /// let doc = Document::parse(r#"<package name="tinyxml2" version="1.0"/>"#)?;
+    /// let package = doc.element_ref(doc.root_element().expect("package element")).expect("element");
+    ///
+    /// assert_eq!(package.attribute("name"), Some("tinyxml2"));
+    /// assert_eq!(package.attribute("missing"), None);
+    /// # Ok::<(), tinyxml2::XmlError>(())
+    /// ```
     pub fn attribute(&self, name: &str) -> Option<&'a str> {
         self.doc.attribute(self.id, name)
     }
@@ -205,7 +218,20 @@ impl<'a> ElementRef<'a> {
         Children::new(self.doc, self.id)
     }
 
-    /// Returns an iterator over child elements, optionally filtered by tag name.
+    /// Returns an iterator over child elements.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinyxml2::Document;
+    ///
+    /// let doc = Document::parse("<menu><item>Tea</item><item>Coffee</item></menu>")?;
+    /// let menu = doc.element_ref(doc.root_element().expect("menu element")).expect("element");
+    /// let names: Vec<&str> = menu.child_elements().map(|item| item.name()).collect();
+    ///
+    /// assert_eq!(names, vec!["item", "item"]);
+    /// # Ok::<(), tinyxml2::XmlError>(())
+    /// ```
     pub fn child_elements(&self) -> ChildElements<'a> {
         ChildElements::new(self.doc, self.id, None)
     }
@@ -216,6 +242,18 @@ impl<'a> ElementRef<'a> {
     }
 
     /// Returns the text content of the first child Text node, if one exists.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinyxml2::Document;
+    ///
+    /// let doc = Document::parse("<status>ready</status>")?;
+    /// let status = doc.element_ref(doc.root_element().expect("status element")).expect("element");
+    ///
+    /// assert_eq!(status.text(), Some("ready"));
+    /// # Ok::<(), tinyxml2::XmlError>(())
+    /// ```
     pub fn text(&self) -> Option<&'a str> {
         self.doc.get_text(self.id)
     }

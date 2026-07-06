@@ -168,6 +168,18 @@ impl Document {
     }
 
     /// Parses an XML document from a string slice, returning the new Document.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinyxml2::Document;
+    ///
+    /// let doc = Document::parse(r#"<book isbn="9780441172719"><title>Dune</title></book>"#)?;
+    /// let book = doc.root_element().expect("book element");
+    ///
+    /// assert_eq!(doc.attribute(book, "isbn"), Some("9780441172719"));
+    /// # Ok::<(), tinyxml2::XmlError>(())
+    /// ```
     pub fn parse(xml: &str) -> Result<Self> {
         let mut doc = Self::new();
         doc.parse_str(xml)?;
@@ -194,6 +206,21 @@ impl Document {
     // --- Factory Methods ---
 
     /// Creates a new detached Element node in the document's arena.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinyxml2::Document;
+    ///
+    /// let mut doc = Document::new();
+    /// let library = doc.new_element("library");
+    /// doc.set_attribute(library, "name", "Central")?;
+    /// doc.insert_end_child(doc.root(), library)?;
+    ///
+    /// assert_eq!(doc.root_element(), Some(library));
+    /// assert_eq!(doc.attribute(library, "name"), Some("Central"));
+    /// # Ok::<(), tinyxml2::XmlError>(())
+    /// ```
     pub fn new_element(&mut self, name: &str) -> NodeId {
         let kind = NodeKind::Element(ElementData {
             name: name.to_string(),
@@ -274,6 +301,19 @@ impl Document {
     }
 
     /// Returns the first child Element of the specified node, optionally matching a tag name.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinyxml2::Document;
+    ///
+    /// let doc = Document::parse("<feed><title>News</title><entry id=\"1\"/></feed>")?;
+    /// let feed = doc.root_element().expect("feed element");
+    /// let entry = doc.first_child_element(feed, Some("entry")).expect("entry element");
+    ///
+    /// assert_eq!(doc.attribute(entry, "id"), Some("1"));
+    /// # Ok::<(), tinyxml2::XmlError>(())
+    /// ```
     #[must_use]
     pub fn first_child_element(&self, node: NodeId, name: Option<&str>) -> Option<NodeId> {
         let mut current = self.first_child(node);
@@ -308,6 +348,20 @@ impl Document {
     }
 
     /// Returns the next sibling Element of the specified node, optionally matching a tag name.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinyxml2::Document;
+    ///
+    /// let doc = Document::parse("<playlist><track/><note>skip me</note><track id=\"next\"/></playlist>")?;
+    /// let playlist = doc.root_element().expect("playlist element");
+    /// let first_track = doc.first_child_element(playlist, Some("track")).expect("first track");
+    /// let next_track = doc.next_sibling_element(first_track, Some("track")).expect("next track");
+    ///
+    /// assert_eq!(doc.attribute(next_track, "id"), Some("next"));
+    /// # Ok::<(), tinyxml2::XmlError>(())
+    /// ```
     #[must_use]
     pub fn next_sibling_element(&self, node: NodeId, name: Option<&str>) -> Option<NodeId> {
         let mut current = self.next_sibling(node);
@@ -342,6 +396,18 @@ impl Document {
     }
 
     /// Returns the root Element of the document (the first element child of the root document node).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinyxml2::Document;
+    ///
+    /// let doc = Document::parse("<config><theme>dark</theme></config>")?;
+    /// let root = doc.root_element().expect("root element");
+    ///
+    /// assert_eq!(doc.element_ref(root).expect("element").name(), "config");
+    /// # Ok::<(), tinyxml2::XmlError>(())
+    /// ```
     #[must_use]
     pub fn root_element(&self) -> Option<NodeId> {
         self.first_child_element(self.root, None)
@@ -589,6 +655,19 @@ impl Document {
     // --- Attribute Manipulation ---
 
     /// Returns the string value of the attribute on element `el` if it exists.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinyxml2::Document;
+    ///
+    /// let doc = Document::parse(r#"<server host="localhost" port="8080"/>"#)?;
+    /// let server = doc.root_element().expect("server element");
+    ///
+    /// assert_eq!(doc.attribute(server, "host"), Some("localhost"));
+    /// assert_eq!(doc.attribute(server, "missing"), None);
+    /// # Ok::<(), tinyxml2::XmlError>(())
+    /// ```
     #[must_use]
     pub fn attribute(&self, el: NodeId, name: &str) -> Option<&str> {
         let data = self.arena.get(el)?;
@@ -603,6 +682,19 @@ impl Document {
     }
 
     /// Sets the value of an attribute on element `el` (inserts or updates).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinyxml2::Document;
+    ///
+    /// let mut doc = Document::parse("<feature/>")?;
+    /// let feature = doc.root_element().expect("feature element");
+    ///
+    /// doc.set_attribute(feature, "enabled", "true")?;
+    /// assert_eq!(doc.attribute(feature, "enabled"), Some("true"));
+    /// # Ok::<(), tinyxml2::XmlError>(())
+    /// ```
     pub fn set_attribute(&mut self, el: NodeId, name: &str, value: &str) -> Result<()> {
         let data = self.arena.get_mut(el).ok_or(XmlError::InvalidNodeId)?;
         match &mut data.kind {
@@ -696,6 +788,19 @@ impl Document {
 
     /// Returns an iterator over the direct child elements of `parent`,
     /// optionally filtered by tag name.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tinyxml2::Document;
+    ///
+    /// let doc = Document::parse("<catalog><book/><magazine/><book/></catalog>")?;
+    /// let catalog = doc.root_element().expect("catalog element");
+    /// let book_count = doc.child_elements(catalog, Some("book")).count();
+    ///
+    /// assert_eq!(book_count, 2);
+    /// # Ok::<(), tinyxml2::XmlError>(())
+    /// ```
     pub fn child_elements(
         &self,
         parent: NodeId,
