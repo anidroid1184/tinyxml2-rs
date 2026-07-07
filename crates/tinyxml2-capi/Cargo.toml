@@ -18,7 +18,7 @@ readme = "../../README.md"
 crate-type = ["cdylib", "staticlib", "lib"]
 
 [dependencies]
-tinyxml2 = { path = "../tinyxml2", version = "1.0.0" }
+tinyxml2 = { path = "../tinyxml2", version = "1.1.0" }
 
 [build-dependencies]
 cbindgen = "0.28"

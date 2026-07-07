@@ -15,7 +15,7 @@ documentation = "https://docs.rs/tinyxml2-bench"
 readme = "../../README.md"
 
 [dependencies]
-tinyxml2 = { path = "../tinyxml2", version = "1.0.0" }
+tinyxml2 = { path = "../tinyxml2", version = "1.1.0" }
 
 [dev-dependencies]
 criterion = { version = "0.5", features = ["html_reports"] }
