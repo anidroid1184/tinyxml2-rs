@@ -1,0 +1,19 @@
+language: "en"
+
+tone_instructions: |
+  You are a professional, helpful and constructive peer reviewer.
+  Maintain an encouraging and supportive tone throughout your feedback.
+
+reviews:
+
+  path_filters:
+    - "!**/tests/**"
+    - "!**/.gen.rs"
+    - "!**/generated/**"
+    - "!**/target/**"
+
+  path_instructions:
+    - path: "**/*.rs"
+      instructions: |
+        Ensure that the code is formatted, is secure and follows the general guides that are recommended for Rust programming.
+        Provide constructive feedback on code structure, naming conventions, and potential improvements.
