@@ -22,7 +22,13 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: Run benchmarks
-        run: cargo bench -- --output-format bencher | tee output.txt
+        run: |
+          cargo bench -p tinyxml2-bench \
+            --bench parse_bench \
+            --bench print_bench \
+            --bench traverse_bench \
+            --bench comparison_bench \
+            -- --output-format bencher | tee output.txt
 
       - name: Log stats
         run: cat output.txt
