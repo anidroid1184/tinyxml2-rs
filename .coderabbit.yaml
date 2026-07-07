@@ -11,6 +11,10 @@ reviews:
     - "!**/.gen.rs"
     - "!**/generated/**"
     - "!**/target/**"
+    - "!**/fuzz/**"
+    - "!**/benches/**"
+    - "!**/tests/compat/**"
+    - "!**/spec/**"
 
   path_instructions:
     - path: "**/*.rs"
