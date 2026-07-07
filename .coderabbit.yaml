@@ -16,8 +16,21 @@ reviews:
     - "!**/tests/compat/**"
     - "!**/spec/**"
 
+  custom_instructions: |
+    - Focus on idiomatic Rust, security, and performance.
+    - Project context: This is a #![no_std] crate using alloc.
+    - Architecture: We use a generational arena pattern. Never suggest Rc/RefCell; always use NodeId for traversal.
+    - Unsafe: Strictly forbid usage of `unsafe` in the core crate unless fully justified.
+
+chat:
+  custom_instructions: |
+    - You are an expert assistant for a #![no_std] Rust project using generational arenas.
+    - Always prefer NodeId over Rc/RefCell.
+    - Prioritize safety and avoid `unsafe` blocks.
+
   path_instructions:
     - path: "**/*.rs"
       instructions: |
         Ensure that the code is formatted, is secure and follows the general guides that are recommended for Rust programming.
         Provide constructive feedback on code structure, naming conventions, and potential improvements.
+
