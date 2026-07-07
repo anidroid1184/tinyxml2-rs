@@ -4,6 +4,8 @@
 //! [`NodeId`], providing safe, ergonomic access to node data without
 //! requiring the caller to pass the document around separately.
 
+use core::ptr;
+
 use crate::arena::NodeId;
 use crate::document::Document;
 use crate::iter::{Attributes, ChildElements, Children, Descendants, Siblings};
@@ -117,7 +119,7 @@ impl<'a> NodeRef<'a> {
 
 impl PartialEq for NodeRef<'_> {
     fn eq(&self, other: &Self) -> bool {
-        std::ptr::eq(self.doc, other.doc) && self.id == other.id
+        ptr::eq(self.doc, other.doc) && self.id == other.id
     }
 }
 
@@ -239,7 +241,7 @@ impl<'a> ElementRef<'a> {
 
 impl PartialEq for ElementRef<'_> {
     fn eq(&self, other: &Self) -> bool {
-        std::ptr::eq(self.doc, other.doc) && self.id == other.id
+        ptr::eq(self.doc, other.doc) && self.id == other.id
     }
 }
 

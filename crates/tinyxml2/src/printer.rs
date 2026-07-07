@@ -2,6 +2,9 @@
 //!
 //! Exposes [`XmlPrinter`] which provides pretty-printed and compact XML serialization.
 
+use alloc::string::{String, ToString};
+use alloc::vec::Vec;
+
 use crate::arena::NodeId;
 use crate::document::Document;
 use crate::node::{Attribute, NodeKind};

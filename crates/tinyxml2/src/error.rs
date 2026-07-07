@@ -10,15 +10,18 @@
 //! The Rust API uses `Result<T, XmlError>` instead of TinyXML2's pattern of returning
 //! error codes and polling `Document::Error()`.
 
-use std::fmt;
+use alloc::string::String;
+#[cfg(feature = "std")]
+use alloc::string::ToString;
+use core::fmt;
 
 /// Result type alias using [`XmlError`] as the error type.
-pub type Result<T> = std::result::Result<T, XmlError>;
+pub type Result<T> = core::result::Result<T, XmlError>;
 
 /// Comprehensive XML error type compatible with TinyXML2's error codes.
 ///
 /// Parse errors include the line number where the error was detected, enabling
-/// precise diagnostic reporting. File I/O errors wrap the underlying
+/// precise diagnostic reporting. With the `std` feature, file I/O errors wrap the underlying
 /// [`std::io::Error`].
 ///
 /// # TinyXML2 Mapping
@@ -53,6 +56,7 @@ pub enum XmlError {
     ///
     /// Wraps [`std::io::Error`] and covers TinyXML2's `XML_ERROR_FILE_NOT_FOUND`,
     /// `XML_ERROR_FILE_COULD_NOT_BE_OPENED`, and `XML_ERROR_FILE_READ_ERROR`.
+    #[cfg(feature = "std")]
     Io(std::io::Error),
 
     // --- Parse errors ---
@@ -154,6 +158,7 @@ impl XmlError {
         match self {
             Self::NoAttribute => "XML_NO_ATTRIBUTE",
             Self::WrongAttributeType => "XML_WRONG_ATTRIBUTE_TYPE",
+            #[cfg(feature = "std")]
             Self::Io(_) => "XML_ERROR_FILE_READ_ERROR",
             Self::Parse { kind, .. } => kind.error_name(),
             Self::EmptyDocument => "XML_ERROR_EMPTY_DOCUMENT",
@@ -202,6 +207,7 @@ impl fmt::Display for XmlError {
         match self {
             Self::NoAttribute => write!(f, "attribute not found"),
             Self::WrongAttributeType => write!(f, "wrong attribute type"),
+            #[cfg(feature = "std")]
             Self::Io(err) => write!(f, "I/O error: {err}"),
             Self::Parse {
                 kind,
@@ -236,6 +242,7 @@ impl fmt::Display for XmlError {
     }
 }
 
+#[cfg(feature = "std")]
 impl std::error::Error for XmlError {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match self {
@@ -245,6 +252,7 @@ impl std::error::Error for XmlError {
     }
 }
 
+#[cfg(feature = "std")]
 impl From<std::io::Error> for XmlError {
     fn from(err: std::io::Error) -> Self {
         Self::Io(err)
@@ -256,6 +264,7 @@ impl Clone for XmlError {
         match self {
             Self::NoAttribute => Self::NoAttribute,
             Self::WrongAttributeType => Self::WrongAttributeType,
+            #[cfg(feature = "std")]
             Self::Io(err) => Self::Io(std::io::Error::new(err.kind(), err.to_string())),
             Self::Parse {
                 kind,
@@ -326,6 +335,7 @@ impl PartialEq for XmlError {
                     max_depth: m2,
                 },
             ) => l1 == l2 && m1 == m2,
+            #[cfg(feature = "std")]
             (Self::Io(a), Self::Io(b)) => a.kind() == b.kind(),
             _ => false,
         }
@@ -336,6 +346,8 @@ impl Eq for XmlError {}
 
 #[cfg(test)]
 mod tests {
+    use alloc::string::ToString;
+
     use super::*;
 
     #[test]
@@ -444,12 +456,12 @@ mod tests {
     fn error_is_send_sync() {
         fn assert_send<T: Send>() {}
         fn assert_sync<T: Sync>() {}
-        // XmlError contains std::io::Error which is Send + Sync
         assert_send::<XmlError>();
         assert_sync::<XmlError>();
     }
 
     #[test]
+    #[cfg(feature = "std")]
     fn io_error_conversion() {
         let io_err = std::io::Error::new(std::io::ErrorKind::NotFound, "file not found");
         let xml_err: XmlError = io_err.into();
@@ -469,6 +481,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "std")]
     fn std_error_source() {
         let io_err = std::io::Error::new(std::io::ErrorKind::NotFound, "not found");
         let xml_err = XmlError::Io(io_err);

@@ -21,6 +21,10 @@
 //! - Invalid numeric references (e.g., `&#0;`, `&#x110000;`) are left as-is
 //! - Entity processing can be disabled via `ParseOptions::process_entities`
 
+use alloc::borrow::Cow;
+use alloc::string::String;
+use core::str;
+
 /// Decodes XML entities in a string, replacing entity references with their
 /// corresponding characters.
 ///
@@ -83,11 +87,11 @@ pub fn decode(input: &str) -> String {
 /// let result = decode_cow("a &amp; b");
 /// assert_eq!(result, "a & b");
 /// ```
-pub fn decode_cow(input: &str) -> std::borrow::Cow<'_, str> {
+pub fn decode_cow(input: &str) -> Cow<'_, str> {
     if !input.contains('&') {
-        return std::borrow::Cow::Borrowed(input);
+        return Cow::Borrowed(input);
     }
-    std::borrow::Cow::Owned(decode(input))
+    Cow::Owned(decode(input))
 }
 
 /// Decodes ONLY numeric character references in a string, leaving named entities (like `&amp;`) as-is.
@@ -137,11 +141,11 @@ fn try_decode_numeric_entity(bytes: &[u8]) -> Option<(char, usize)> {
         let num_body = &entity_body[1..];
         let code_point = if num_body.first() == Some(&b'x') || num_body.first() == Some(&b'X') {
             // Hexadecimal: &#xNN;
-            let hex_str = std::str::from_utf8(&num_body[1..]).ok()?;
+            let hex_str = str::from_utf8(&num_body[1..]).ok()?;
             u32::from_str_radix(hex_str, 16).ok()?
         } else {
             // Decimal: &#NN;
-            let dec_str = std::str::from_utf8(num_body).ok()?;
+            let dec_str = str::from_utf8(num_body).ok()?;
             dec_str.parse::<u32>().ok()?
         };
 
@@ -201,9 +205,9 @@ fn try_decode_entity(bytes: &[u8]) -> Option<(char, usize)> {
 /// assert_eq!(encode_text("a < b & c > d"), "a &lt; b &amp; c &gt; d");
 /// assert_eq!(encode_text("no special chars"), "no special chars");
 /// ```
-pub fn encode_text(input: &str) -> std::borrow::Cow<'_, str> {
+pub fn encode_text(input: &str) -> Cow<'_, str> {
     if !input.contains(['&', '<', '>']) {
-        return std::borrow::Cow::Borrowed(input);
+        return Cow::Borrowed(input);
     }
 
     let mut output = String::with_capacity(input.len() + input.len() / 8);
@@ -215,7 +219,7 @@ pub fn encode_text(input: &str) -> std::borrow::Cow<'_, str> {
             other => output.push(other),
         }
     }
-    std::borrow::Cow::Owned(output)
+    Cow::Owned(output)
 }
 
 /// Encodes special XML characters in attribute values.
@@ -234,9 +238,9 @@ pub fn encode_text(input: &str) -> std::borrow::Cow<'_, str> {
 ///     "value with &quot;quotes&quot; &amp; &apos;apostrophes&apos;"
 /// );
 /// ```
-pub fn encode_attribute(input: &str) -> std::borrow::Cow<'_, str> {
+pub fn encode_attribute(input: &str) -> Cow<'_, str> {
     if !input.contains(['&', '<', '>', '"', '\'']) {
-        return std::borrow::Cow::Borrowed(input);
+        return Cow::Borrowed(input);
     }
 
     let mut output = String::with_capacity(input.len() + input.len() / 4);
@@ -250,11 +254,13 @@ pub fn encode_attribute(input: &str) -> std::borrow::Cow<'_, str> {
             other => output.push(other),
         }
     }
-    std::borrow::Cow::Owned(output)
+    Cow::Owned(output)
 }
 
 #[cfg(test)]
 mod tests {
+    use alloc::borrow::Cow;
+
     use super::*;
 
     // ---- Decode tests ----
@@ -335,13 +341,13 @@ mod tests {
     #[test]
     fn decode_cow_borrows_when_no_entities() {
         let result = decode_cow("no entities here");
-        assert!(matches!(result, std::borrow::Cow::Borrowed(_)));
+        assert!(matches!(result, Cow::Borrowed(_)));
     }
 
     #[test]
     fn decode_cow_owns_when_entities_present() {
         let result = decode_cow("has &amp; entity");
-        assert!(matches!(result, std::borrow::Cow::Owned(_)));
+        assert!(matches!(result, Cow::Owned(_)));
         assert_eq!(result, "has & entity");
     }
 
@@ -358,7 +364,7 @@ mod tests {
     #[test]
     fn encode_text_no_special_chars() {
         let result = encode_text("hello world");
-        assert!(matches!(result, std::borrow::Cow::Borrowed(_)));
+        assert!(matches!(result, Cow::Borrowed(_)));
     }
 
     #[test]
@@ -379,7 +385,7 @@ mod tests {
     #[test]
     fn encode_attribute_no_special_chars() {
         let result = encode_attribute("hello world");
-        assert!(matches!(result, std::borrow::Cow::Borrowed(_)));
+        assert!(matches!(result, Cow::Borrowed(_)));
     }
 
     #[test]

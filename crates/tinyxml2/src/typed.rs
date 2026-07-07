@@ -1,5 +1,8 @@
 //! Typed attribute and text parsing implementations on Document.
 
+use alloc::string::ToString;
+use core::str::FromStr;
+
 use crate::arena::NodeId;
 use crate::document::Document;
 use crate::error::{Result, XmlError};
@@ -18,7 +21,7 @@ fn parse_bool(s: &str) -> Result<bool> {
     }
 }
 
-fn parse_numeric<T: std::str::FromStr>(s: &str) -> Result<T> {
+fn parse_numeric<T: FromStr>(s: &str) -> Result<T> {
     s.trim()
         .parse::<T>()
         .map_err(|_| XmlError::WrongAttributeType)
@@ -35,7 +38,7 @@ fn parse_bool_text(s: &str) -> Result<bool> {
     }
 }
 
-fn parse_numeric_text<T: std::str::FromStr>(s: &str) -> Result<T> {
+fn parse_numeric_text<T: FromStr>(s: &str) -> Result<T> {
     s.trim()
         .parse::<T>()
         .map_err(|_| XmlError::CanNotConvertText)

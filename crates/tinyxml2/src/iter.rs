@@ -4,7 +4,8 @@
 //! reference wrappers ([`NodeRef`] and [`ElementRef`]) for safe,
 //! ergonomic tree navigation.
 
-use std::iter::FusedIterator;
+use alloc::string::String;
+use core::{iter::FusedIterator, slice};
 
 use crate::arena::NodeId;
 use crate::document::Document;
@@ -147,7 +148,7 @@ impl FusedIterator for Siblings<'_> {}
 /// Created by [`ElementRef::attributes`] or [`Document::attributes`].
 #[derive(Debug, Clone)]
 pub struct Attributes<'a> {
-    inner: std::slice::Iter<'a, Attribute>,
+    inner: slice::Iter<'a, Attribute>,
 }
 
 impl<'a> Attributes<'a> {

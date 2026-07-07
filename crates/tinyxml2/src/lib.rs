@@ -39,10 +39,13 @@
 //! the current implementation phase.
 
 // Enforce no unsafe in the core crate
+#![cfg_attr(not(feature = "std"), no_std)]
 #![forbid(unsafe_code)]
 // Documentation quality
 #![warn(missing_docs)]
 #![warn(rustdoc::missing_crate_level_docs)]
+
+extern crate alloc;
 
 pub mod arena;
 pub mod document;

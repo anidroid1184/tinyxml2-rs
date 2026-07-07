@@ -22,7 +22,8 @@
 // u32 index is an intentional design choice — 4 billion nodes is sufficient for any XML document.
 #![allow(clippy::cast_possible_truncation)]
 
-use std::fmt;
+use alloc::vec::Vec;
+use core::{fmt, iter, mem, slice};
 
 /// A unique, generation-checked identifier for an item in an [`Arena`].
 ///
@@ -223,7 +224,7 @@ impl<T> Arena<T> {
         }
 
         // Swap out the occupied slot for a vacant one
-        let old_slot = std::mem::replace(&mut self.slots[index], Slot::Vacant(self.free_head));
+        let old_slot = mem::replace(&mut self.slots[index], Slot::Vacant(self.free_head));
         self.free_head = index as u32;
         self.generations[index] = self.generations[index].wrapping_add(1);
         self.len -= 1;
@@ -373,7 +374,7 @@ impl<'a, T> Iterator for ArenaIter<'a, T> {
 
 /// Mutable iterator over all occupied entries in an arena.
 pub struct ArenaIterMut<'a, T> {
-    inner: std::iter::Enumerate<std::slice::IterMut<'a, Slot<T>>>,
+    inner: iter::Enumerate<slice::IterMut<'a, Slot<T>>>,
     generations: &'a [u32],
 }
 
@@ -396,6 +397,9 @@ impl<'a, T> Iterator for ArenaIterMut<'a, T> {
 
 #[cfg(test)]
 mod tests {
+    use alloc::format;
+    use alloc::string::ToString;
+
     use super::*;
 
     #[test]
@@ -632,6 +636,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "std")]
     fn node_id_hash() {
         use std::collections::HashSet;
         let mut set = HashSet::new();

@@ -10,6 +10,8 @@
 //! simplified character classification that covers ASCII and common Unicode
 //! ranges. Our implementation follows the same practical subset.
 
+use alloc::string::String;
+
 /// Returns `true` if the character is XML whitespace.
 ///
 /// XML 1.0 defines whitespace as: space (0x20), tab (0x09), carriage return

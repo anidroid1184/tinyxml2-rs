@@ -15,31 +15,44 @@ readme = "../../README.md"
 
 [dependencies]
 
-[dev-dependencies]
+[features]
+default = ["std"]
+std = []
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 proptest = "1.5"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0", features = ["unbounded_depth"] }
-tinyxml2-capi = { path = "../tinyxml2-capi" }
 
 [[example]]
 name = "parse_file"
 path = "../../examples/parse_file.rs"
+required-features = ["std"]
 
 [[example]]
 name = "build_dom"
 path = "../../examples/build_dom.rs"
+required-features = ["std"]
 
 [[example]]
 name = "visitor"
 path = "../../examples/visitor.rs"
+required-features = ["std"]
 
 [[example]]
 name = "streaming_writer"
 path = "../../examples/streaming_writer.rs"
+required-features = ["std"]
+
+[[example]]
+name = "wasm_parse"
+path = "../../examples/wasm_parse.rs"
+required-features = ["std"]
 
 [[test]]
 name = "compat"
 path = "../../tests/compat/harness.rs"
+required-features = ["std"]
 
 [lints]
 workspace = true

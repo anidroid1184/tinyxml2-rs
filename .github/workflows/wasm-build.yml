@@ -1,0 +1,60 @@
+name: WASM Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: -D warnings
+
+jobs:
+  build:
+    name: Build (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: default
+            target: ""
+            command: cargo build -p tinyxml2
+          - name: no-default-features
+            target: ""
+            command: cargo build -p tinyxml2 --no-default-features --lib
+          - name: wasm32-unknown-unknown
+            target: wasm32-unknown-unknown
+            command: cargo build -p tinyxml2 --target wasm32-unknown-unknown
+          - name: wasm32-unknown-unknown-no-std
+            target: wasm32-unknown-unknown
+            command: cargo build -p tinyxml2 --no-default-features --target wasm32-unknown-unknown --lib
+          - name: wasm32-unknown-unknown-example
+            target: wasm32-unknown-unknown
+            command: cargo build -p tinyxml2 --target wasm32-unknown-unknown --example wasm_parse
+          - name: wasm32-wasip1
+            target: wasm32-wasip1
+            command: cargo build -p tinyxml2 --target wasm32-wasip1
+          - name: wasm32-wasip1-no-std
+            target: wasm32-wasip1
+            command: cargo build -p tinyxml2 --no-default-features --target wasm32-wasip1 --lib
+          - name: wasm32-wasip1-example
+            target: wasm32-wasip1
+            command: cargo build -p tinyxml2 --target wasm32-wasip1 --example wasm_parse
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install target
+        if: matrix.target != ''
+        run: rustup target add ${{ matrix.target }}
+
+      - name: Cache Cargo registry and build artifacts
+        uses: Swatinem/rust-cache@v2
+
+      - name: Build
+        run: ${{ matrix.command }}

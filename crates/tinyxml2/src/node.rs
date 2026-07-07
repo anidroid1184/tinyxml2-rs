@@ -1,5 +1,8 @@
 //! XML DOM node types.
 
+use alloc::string::String;
+use alloc::vec::Vec;
+
 use crate::arena::NodeId;
 
 /// An XML attribute name-value pair.

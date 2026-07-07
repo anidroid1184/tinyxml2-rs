@@ -3,6 +3,10 @@
 //! Operates on a validated UTF-8 string input and constructs DOM nodes
 //! directly into the `Document`'s node arena.
 
+use alloc::format;
+use alloc::string::{String, ToString};
+use alloc::vec::Vec;
+
 use crate::arena::NodeId;
 use crate::document::Document;
 use crate::error::{ParseErrorKind, Result, XmlError};

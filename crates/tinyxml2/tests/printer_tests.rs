@@ -151,6 +151,7 @@ fn test_streaming_api() {
 }
 
 #[test]
+#[cfg(feature = "std")]
 fn test_save_writer() {
     let mut doc = Document::new();
     let root = doc.new_element("root");

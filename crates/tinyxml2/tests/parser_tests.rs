@@ -1,3 +1,4 @@
+#[cfg(feature = "std")]
 use std::fs;
 use tinyxml2::{Document, NodeKind, ParseOptions, Result, Whitespace, XmlError};
 
@@ -353,6 +354,7 @@ fn test_invalid_utf8_rejection() {
 }
 
 #[test]
+#[cfg(feature = "std")]
 fn test_file_loading() -> Result<()> {
     let xml = "<root><child>file data</child></root>";
     let path = "test_temp_parser.xml";

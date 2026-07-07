@@ -1,5 +1,10 @@
 //! XML document container and DOM tree manipulation.
 
+use alloc::format;
+use alloc::string::{String, ToString};
+use alloc::vec::Vec;
+use core::{fmt, str};
+
 use crate::ParseOptions;
 use crate::arena::{Arena, NodeId};
 use crate::error::{Result, XmlError};
@@ -141,7 +146,7 @@ impl Document {
     ///
     /// Rejects non-UTF-8 inputs. Any existing DOM structure is cleared.
     pub fn parse_bytes_mut(&mut self, bytes: &[u8]) -> Result<()> {
-        let s = std::str::from_utf8(bytes).map_err(|e| {
+        let s = str::from_utf8(bytes).map_err(|e| {
             let err = XmlError::Parse {
                 kind: crate::error::ParseErrorKind::General,
                 line: 1,
@@ -156,6 +161,7 @@ impl Document {
     /// Loads and parses an XML file from the given path in place.
     ///
     /// Any existing DOM structure is cleared.
+    #[cfg(feature = "std")]
     pub fn load_file_mut(&mut self, path: impl AsRef<std::path::Path>) -> Result<()> {
         let bytes = std::fs::read(path)?;
         self.parse_bytes_mut(&bytes)
@@ -178,6 +184,7 @@ impl Document {
     }
 
     /// Loads and parses an XML file from the given path, returning the new Document.
+    #[cfg(feature = "std")]
     pub fn load_file(path: impl AsRef<std::path::Path>) -> Result<Self> {
         let mut doc = Self::new();
         doc.load_file_mut(path)?;
@@ -841,18 +848,21 @@ impl Document {
     }
 
     /// Saves the pretty-printed document to the given file path.
+    #[cfg(feature = "std")]
     pub fn save_file(&self, path: impl AsRef<std::path::Path>) -> Result<()> {
         let file = std::fs::File::create(path)?;
         self.save_writer(file)
     }
 
     /// Saves the compact-printed document to the given file path.
+    #[cfg(feature = "std")]
     pub fn save_file_compact(&self, path: impl AsRef<std::path::Path>) -> Result<()> {
         let file = std::fs::File::create(path)?;
         self.save_writer_compact(file)
     }
 
     /// Pretty-prints the document to the given `std::io::Write` sink.
+    #[cfg(feature = "std")]
     pub fn save_writer(&self, mut writer: impl std::io::Write) -> Result<()> {
         let s = self.to_string();
         writer.write_all(s.as_bytes())?;
@@ -860,6 +870,7 @@ impl Document {
     }
 
     /// Compact-prints the document to the given `std::io::Write` sink.
+    #[cfg(feature = "std")]
     pub fn save_writer_compact(&self, mut writer: impl std::io::Write) -> Result<()> {
         let s = self.to_string_compact();
         writer.write_all(s.as_bytes())?;
@@ -873,8 +884,8 @@ impl Default for Document {
     }
 }
 
-impl std::fmt::Display for Document {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl fmt::Display for Document {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.to_string())
     }
 }
