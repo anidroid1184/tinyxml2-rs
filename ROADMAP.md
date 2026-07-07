@@ -23,7 +23,7 @@ one and is designed to produce a shippable, testable increment.
 | 6     | C API (`tinyxml2-capi`)      | Medium     | ✅ **Completed** |
 | 7     | Testing & Benchmarks         | Medium     | ✅ **Completed** |
 | 8     | Documentation & Release      | Low        | ✅ **Completed** |
-| 9     | WASM & `no_std` Support      | Medium     | 🔲 Planned     |
+| 9     | WASM & `no_std` Support      | Medium     | ✅ **Completed** |
 | 10    | XPath & Serde Integration    | High       | 🔲 Planned     |
 | 11    | Advanced Perf & SIMD         | High       | 🔲 Planned     |
 
@@ -309,14 +309,14 @@ parse_document()
 
 ---
 
-## Phase 9: WASM & `no_std` Support (Target: Version 1.1.0) 🔲 **PLANNED**
+## Phase 9: WASM & `no_std` Support (Target: Version 1.1.0) ✅ **COMPLETED**
 
 Enable tinyxml2-rs to run in resource-constrained embedded environments and web browsers.
 
 ### Key Deliverables
-- [ ] **no_std compatibility** — Feature-gate standard library dependencies and use the `alloc` crate for all dynamic memory allocations (`Vec`, `String`, `Box`). Target: `#![no_std]` with `extern crate alloc`.
-- [ ] **WASM bindings** — Add `wasm-bindgen` support and create JavaScript/TypeScript bindings to allow parsing/serializing XML directly in the browser and Node.js.
-- [ ] **Abstract I/O** — Replace file/stream writers with core-friendly abstractions that do not depend on `std::io::Write`.
+- [x] **no_std compatibility** — Feature-gate standard library dependencies and use the `alloc` crate for all dynamic memory allocations (`Vec`, `String`, `Box`). Target: `#![no_std]` with `extern crate alloc`.
+- [x] **WASM target support** — Validate the core crate on `wasm32-unknown-unknown` and `wasm32-wasip1`. JavaScript bindings are intentionally left to the host application boundary; see `docs/architecture/wasm.md`.
+- [x] **Abstract I/O** — Gate file/stream writers behind the `std` feature and keep the core parser, DOM, and string serialization available without `std::io::Write`.
 
 ---
 

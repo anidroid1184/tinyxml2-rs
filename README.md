@@ -147,7 +147,7 @@ Our MSRV policy guarantees compatibility with **Rust 1.85.0** or newer. Changes 
 | C FFI Layer & Header Generation | ✅ Complete |
 | Conformance Testing & Differential Fuzzing | ✅ Complete |
 | Stable v1.0.0 Stable Release | ✅ Complete |
-| Phase 9 — WASM & `no_std` Support (v1.1.0) | 🔲 Planned |
+| Phase 9 — WASM & `no_std` Support (v1.1.0) | ✅ Complete |
 | Phase 10 — XPath & Serde Integration (v1.2.0) | 🔲 Planned |
 | Phase 11 — Advanced Perf & SIMD (v2.0.0) | 🔲 Planned |
 
