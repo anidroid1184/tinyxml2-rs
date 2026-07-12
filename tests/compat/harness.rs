@@ -191,10 +191,9 @@ fn find_workspace_root() -> Option<PathBuf> {
         if dir.join("tests").join("corpus").exists() {
             return Some(dir);
         }
-        if let Some(parent) = dir.parent() {
+        {
+            let parent = dir.parent()?;
             dir = parent.to_path_buf();
-        } else {
-            return None;
         }
     }
 }

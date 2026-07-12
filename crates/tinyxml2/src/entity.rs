@@ -123,7 +123,7 @@ pub fn decode_numeric_only(input: &str) -> String {
 
 /// Attempts to decode a single numeric entity reference starting at the given byte slice.
 fn try_decode_numeric_entity(bytes: &[u8]) -> Option<(char, usize)> {
-    debug_assert!(bytes[0] == b'&');
+    debug_assert_eq!(bytes[0], b'&');
 
     // Find the semicolon
     let semi_pos = bytes.iter().position(|&b| b == b';')?;
@@ -165,7 +165,7 @@ fn try_decode_numeric_entity(bytes: &[u8]) -> Option<(char, usize)> {
 /// Returns `Some((char, bytes_consumed))` if a valid entity was decoded,
 /// or `None` if the input does not start with a valid entity reference.
 fn try_decode_entity(bytes: &[u8]) -> Option<(char, usize)> {
-    debug_assert!(bytes[0] == b'&');
+    debug_assert_eq!(bytes[0], b'&');
 
     // Find the semicolon
     let semi_pos = bytes.iter().position(|&b| b == b';')?;
