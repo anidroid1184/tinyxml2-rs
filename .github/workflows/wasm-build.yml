@@ -33,6 +33,9 @@ jobs:
           - name: wasm32-unknown-unknown-example
             target: wasm32-unknown-unknown
             command: cargo build -p tinyxml2 --target wasm32-unknown-unknown --example wasm_parse
+          - name: wasm32-unknown-unknown-capi
+            target: wasm32-unknown-unknown
+            command: cargo build -p tinyxml2-capi --target wasm32-unknown-unknown --release
           - name: wasm32-wasip1
             target: wasm32-wasip1
             command: cargo build -p tinyxml2 --target wasm32-wasip1
@@ -42,6 +45,9 @@ jobs:
           - name: wasm32-wasip1-example
             target: wasm32-wasip1
             command: cargo build -p tinyxml2 --target wasm32-wasip1 --example wasm_parse
+          - name: wasm32-wasip1-capi
+            target: wasm32-wasip1
+            command: cargo build -p tinyxml2-capi --target wasm32-wasip1 --release
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

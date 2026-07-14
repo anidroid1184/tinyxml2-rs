@@ -309,14 +309,17 @@ parse_document()
 
 ---
 
-## Phase 9: WASM & `no_std` Support (Target: Version 1.1.0) ✅ **COMPLETED**
+## Phase 9: WASM & `no_std` Support (Target: Versions 1.1.0 & 1.1.1) ✅ **COMPLETED**
 
 Enable tinyxml2-rs to run in resource-constrained embedded environments and web browsers.
 
-### Key Deliverables
+### Key Deliverables (v1.1.0)
 - [x] **no_std compatibility** — Feature-gate standard library dependencies and use the `alloc` crate for all dynamic memory allocations (`Vec`, `String`, `Box`). Target: `#![no_std]` with `extern crate alloc`.
 - [x] **WASM target support** — Validate the core crate on `wasm32-unknown-unknown` and `wasm32-wasip1`. JavaScript bindings are intentionally left to the host application boundary; see `docs/architecture/wasm.md`.
 - [x] **Abstract I/O** — Gate file/stream writers behind the `std` feature and keep the core parser, DOM, and string serialization available without `std::io::Write`.
+
+### Key Deliverables (v1.1.1)
+- [x] **C/C++ FFI WASM Support** — Support compiling and linking the FFI bindings (`tinyxml2-capi`) on `wasm32-unknown-unknown` and `wasm32-wasip1` targets for C/C++ WebAssembly integration.
 
 ---
 

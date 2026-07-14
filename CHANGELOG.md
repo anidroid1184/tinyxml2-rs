@@ -2,8 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [1.1.1] - 2026-07-14
+
+### Added
+- **WebAssembly Support for C/C++ FFI**: Enabled compilation of the `tinyxml2-capi` FFI bindings crate for `wasm32-unknown-unknown` and `wasm32-wasip1` targets. C and C++ projects compiled to WebAssembly (via Emscripten or WASI SDK) can now link with the static library (`libtinyxml2_capi.a`) as a drop-in replacement.
+- **CI Validation for C/C++ WASM**: Added automated GitHub Actions check to compile `tinyxml2-capi` for WASM targets.
+- **WASM FFI Integration Guide**: Added detailed compilation and linking instructions for Emscripten (`emcc`) and WASI SDK (`clang`) under `docs/architecture/wasm.md`.
+
+## [1.1.0] - 2026-07-01
+
+### Added
+- **`no_std` Support**: Added `no_std` support with `alloc` allocator feature-gated for resource-constrained environments.
+- **Rust WASM Support**: Verified compilation and execution of `tinyxml2` core library under `wasm32-unknown-unknown` and `wasm32-wasip1`.
+- **Abstract I/O**: File operations and stream writers are now feature-gated under the `std` feature.
 
 ## [1.0.0] - 2026-07-01
 

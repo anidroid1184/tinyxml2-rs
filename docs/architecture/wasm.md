@@ -88,9 +88,63 @@ feature. Validate no_std support with `--lib`, or from a consumer crate that
 supplies the allocator, panic strategy, and host boundary required by that
 environment.
 
+## C and C++ WebAssembly Support
+
+The C FFI compatibility layer (`tinyxml2-capi`) compiles to WebAssembly targets out of the box. C and C++ projects compiled to WebAssembly (via Emscripten or WASI SDK) can link against this compiled Rust artifact as a drop-in replacement.
+
+> [!NOTE]
+> The project's CI validates compiling the Rust artifacts (`libtinyxml2_capi.a` and `tinyxml2_capi.wasm`) for WASM targets. Compiling and linking the final C/C++ application remains the responsibility of the consumer's C toolchain (e.g. Emscripten or WASI SDK).
+
+When compiled to `wasm32-unknown-unknown` or `wasm32-wasip1`, it generates:
+- A WebAssembly binary (`tinyxml2_capi.wasm`)
+- A static library (`libtinyxml2_capi.a`)
+
+### Compiling the C FFI for WebAssembly
+
+To compile the C FFI bindings library for WebAssembly:
+
+```bash
+# Target the browser / JavaScript environment (e.g. for Emscripten)
+cargo build -p tinyxml2-capi --target wasm32-unknown-unknown --release
+
+# Target WASI environments (e.g. for Wasmtime, Wasmer)
+cargo build -p tinyxml2-capi --target wasm32-wasip1 --release
+```
+
+The resulting library `libtinyxml2_capi.a` will be located under `target/wasm32-unknown-unknown/release/` or `target/wasm32-wasip1/release/`.
+
+### Linking in C/C++ WebAssembly Projects
+
+#### 1. Browser/Emscripten Toolchain (`emcc`)
+To compile a C/C++ file with Emscripten and link the Rust WASM static library:
+
+```bash
+emcc -Icrates/tinyxml2-capi/include -O3 \
+  crates/tinyxml2-capi/examples/basic.c \
+  target/wasm32-unknown-unknown/release/libtinyxml2_capi.a \
+  -o basic.js \
+  -s WASM=1 \
+  -s ALLOW_MEMORY_GROWTH=1
+```
+
+#### 2. WASI SDK Toolchain (`clang`)
+To compile for a standalone WASI runtime (e.g., Wasmtime) using the WASI SDK:
+
+```bash
+/path/to/wasi-sdk/bin/clang -Icrates/tinyxml2-capi/include -O3 \
+  --sysroot=/path/to/wasi-sysroot \
+  crates/tinyxml2-capi/examples/basic.c \
+  target/wasm32-wasip1/release/libtinyxml2_capi.a \
+  -o basic.wasm
+```
+
+### ABI and Memory Considerations
+- **Shared Memory**: Since Rust and C/C++ compile into a single WebAssembly module when linked statically, they share the same linear memory and allocator (supplied by the C runtime or Rust's target).
+- **String Lifetimes**: Pointers returned by `tx_document_to_string`, `tx_element_name`, or other getters returning `*const c_char` point to UTF-8 C-strings borrowed from the `TxDocument`/`TxPrinter`-owned `CString` caches. Callers **must not free** these pointers. They become invalid as soon as the document is modified (mutated) or when the owning document/printer wrapper is freed.
+
 ## Validation
 
-Use these commands when changing parser, DOM, or serialization code:
+Use these commands when changing parser, DOM, serialization, or FFI code:
 
 ```bash
 cargo check -p tinyxml2
@@ -98,8 +152,10 @@ cargo check -p tinyxml2 --no-default-features --lib
 cargo check -p tinyxml2 --no-default-features --target wasm32-unknown-unknown --lib
 cargo check -p tinyxml2 --target wasm32-wasip1 --lib
 cargo build -p tinyxml2 --target wasm32-unknown-unknown --example wasm_parse
+cargo build -p tinyxml2-capi --target wasm32-unknown-unknown --release
+cargo build -p tinyxml2-capi --target wasm32-wasip1 --release
 cargo test -p tinyxml2 --all-targets
+cargo test -p tinyxml2-capi
 ```
 
-Workspace crates that bind to native C/C++ code, such as `tinyxml2-capi`,
-`tinyxml2-bench`, and `tinyxml2-cpp-helper`, remain native-only.
+Workspace crates that bind to native C/C++ code, such as `tinyxml2-bench` and `tinyxml2-cpp-helper`, remain native-only.
