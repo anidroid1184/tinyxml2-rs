@@ -30,6 +30,11 @@ path = "../../examples/parse_file.rs"
 required-features = ["std"]
 
 [[example]]
+name = "parse_string_error_handling"
+path = "../../examples/parse_string.rs"
+required-features = ["std"]
+
+[[example]]
 name = "build_dom"
 path = "../../examples/build_dom.rs"
 required-features = ["std"]
