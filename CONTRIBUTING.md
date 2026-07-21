@@ -14,6 +14,7 @@ Thank you for your interest in contributing to **tinyxml2-rs**! Every contributi
 - [Development Setup](#development-setup)
 - [Code Style](#code-style)
 - [Testing](#testing)
+  - [Fuzz Testing](#fuzz-testing)
 - [Pull Request Process](#pull-request-process)
 - [Commit Convention](#commit-convention)
 - [Architecture Reference](#architecture-reference)
@@ -173,6 +174,107 @@ cargo test --workspace -- test_name
 # Run tests with output
 cargo test --workspace -- --nocapture
 ```
+
+### Fuzz Testing
+
+Fuzz testing feeds random/mutated inputs to find crashes, panics, and invariant violations that unit tests miss. We use [`cargo-fuzz`](https://rust-fuzz.github.io/book/cargo-fuzz.html) (libFuzzer) with 4 targets in the `fuzz/` directory.
+
+#### Setup
+
+Fuzz targets require a **nightly Rust toolchain** and a **C++11-capable compiler** (GCC or Clang) for the sanitizer runtime.
+
+```bash
+# Install the nightly toolchain (one-time)
+rustup toolchain install nightly
+
+# Optionally, set nightly as the default for this project
+rustup override set nightly
+
+# Install cargo-fuzz (one-time)
+cargo install cargo-fuzz
+```
+
+#### Fuzz Targets
+
+| Target | What it tests |
+|--------|---------------|
+| `parse_fuzz` | Feed arbitrary byte sequences to `Document::parse_bytes`. Must never panic. |
+| `roundtrip_fuzz` | Parse → serialize → parse → assert output is stable (idempotent round-trip). |
+| `serialize_fuzz` | Parse valid XML, then run `to_string` and `to_string_compact`. Must never panic. |
+| `streaming_fuzz` | Feed random sequences of `XmlPrinter` method calls. Must never panic. |
+
+#### Running Fuzz Targets
+
+All commands run from the `fuzz/` directory:
+
+```bash
+cd fuzz
+
+# Run a single target (runs indefinitely — Ctrl+C to stop)
+cargo fuzz run parse_fuzz
+
+# Run with a time limit (recommended for PR validation)
+cargo fuzz run parse_fuzz -- -max_total_time=300
+
+# Run other targets
+cargo fuzz run roundtrip_fuzz
+cargo fuzz run serialize_fuzz
+cargo fuzz run streaming_fuzz
+
+# Run all four targets sequentially (5 minutes each)
+for target in parse_fuzz roundtrip_fuzz serialize_fuzz streaming_fuzz; do
+    echo "=== Fuzzing $target ==="
+    cargo fuzz run "$target" -- -max_total_time=300
+done
+```
+
+**Useful flags** (passed after `--`):
+
+| Flag | Purpose |
+|------|---------|
+| `-max_total_time=N` | Stop after N seconds |
+| `-max_len=N` | Limit input size to N bytes |
+| `-jobs=N` | Run N parallel fuzzer jobs |
+| `-dict=path/to/dict` | Use a dictionary of known tokens |
+| `-rss_limit_mb=N` | Limit memory usage per job to N MB |
+
+#### Reproducing a Crash
+
+When a fuzzer finds a crash, it saves the crashing input as an artifact in `artifacts/<target>/`.
+
+```bash
+# Reproduce the crash with the saved artifact
+cargo fuzz run parse_fuzz artifacts/parse_fuzz/<crash-file>
+
+# Minimize the crashing input (find the smallest input that still triggers the bug)
+cargo fuzz tmin parse_fuzz artifacts/parse_fuzz/<crash-file>
+```
+
+The output will show the panic message, stack trace, and exact input bytes that triggered the crash. Use this to write a minimal reproduction as a unit test, then fix the bug.
+
+#### How Long to Fuzz
+
+For a **quick smoke test** before opening a PR: **5 minutes per target** (20 minutes total) is the minimum.
+
+For changes to **parsing logic**, **serialization**, or **the `XmlPrinter` API**: run the relevant target for at least **30 minutes**. These are the highest-risk areas where subtle edge cases hide.
+
+For a **new release**: run all 4 targets for **2+ hours each** (overnight is ideal). Fuzzing is embarrassingly parallel — run each target in its own terminal:
+
+```bash
+# Terminal 1
+cd fuzz && cargo fuzz run parse_fuzz -- -max_total_time=7200
+
+# Terminal 2
+cd fuzz && cargo fuzz run roundtrip_fuzz -- -max_total_time=7200
+
+# Terminal 3
+cd fuzz && cargo fuzz run serialize_fuzz -- -max_total_time=7200
+
+# Terminal 4
+cd fuzz && cargo fuzz run streaming_fuzz -- -max_total_time=7200
+```
+
+> **Tip:** If you're hunting for a known class of bug, create a [dictionary file](https://rust-fuzz.github.io/book/cargo-fuzz/structure-aware-fuzzing.html) with XML tokens (`<`, `>`, `</`, `/>`, `<?xml`, `<!--`, `<![CDATA[`, entity references) to help the fuzzer generate structurally valid XML faster.
 
 ---
 
