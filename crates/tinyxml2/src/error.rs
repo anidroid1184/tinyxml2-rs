@@ -482,6 +482,15 @@ mod tests {
 
     #[test]
     #[cfg(feature = "std")]
+    fn xml_error_as_box_dyn_error() {
+        let err = XmlError::NoAttribute;
+        let boxed: Box<dyn std::error::Error> = Box::new(err);
+        let _display = boxed.to_string();
+        let _source = boxed.source();
+    }
+
+    #[test]
+    #[cfg(feature = "std")]
     fn std_error_source() {
         let io_err = std::io::Error::new(std::io::ErrorKind::NotFound, "not found");
         let xml_err = XmlError::Io(io_err);
