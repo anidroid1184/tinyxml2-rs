@@ -151,6 +151,11 @@ Our MSRV policy guarantees compatibility with **Rust 1.85.0** or newer. Changes 
 | Phase 10 — XPath & Serde Integration (v1.2.0) | 🔲 Planned |
 | Phase 11 — Advanced Perf & SIMD (v2.0.0) | 🔲 Planned |
 
+### Additional Documentation
+
+- [`docs/architecture/no_std_usage.md`](docs/architecture/no_std_usage.md) — `no_std` + `alloc` usage guide for embedded targets.
+- [`docs/architecture/wasm.md`](docs/architecture/wasm.md) — WebAssembly support (browser, WASI, C/C++ FFI linking).
+
 ---
 
 ## Contributing
